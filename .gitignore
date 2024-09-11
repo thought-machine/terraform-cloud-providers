@@ -1,0 +1,7 @@
+.terraform*
+*.tfvars
+*.tfplan
+*.tfstate
+*.backup
+backend.tf
+variables.tf
