@@ -1,0 +1,12 @@
+region=
+project=
+machine_type=
+network_name=
+artifact_region=
+k8s_name=
+k8s_version =
+project_number=
+registry_name=
+service_account_name=
+service_account_roles = [ ]
+pipeline-ip=
