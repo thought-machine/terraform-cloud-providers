@@ -1,14 +1,14 @@
 # https://kubernetes.github.io/ingress-nginx/deploy/
 locals {
-  ingress_nginx_ingress_class = "ingress-nginx-private"
+  ingress_nginx_ingress_class = "nginx-kafka"
 }
 
-resource "helm_release" "ingress_nginx" {
-  depends_on       = [null_resource.kubectl, module.aws_load_balancer_controller_irsa_role, helm_release.aws_load_balancer_controller]
-  name             = "ingress-nginx"
+resource "helm_release" "kafka_nginx_ingress_controller" {
+  depends_on       = [kubectl_manifest.kafka_broker_cert]
+  name             = local.ingress_nginx_ingress_class
   repository       = "https://kubernetes.github.io/ingress-nginx"
   chart            = "ingress-nginx"
-  namespace        = "ingress-nginx"
+  namespace        = local.kafka_namespace
   create_namespace = true
   version          = "4.13.2"
   # https://github.com/kubernetes/ingress-nginx/blob/main/charts/ingress-nginx/values.yaml
@@ -53,11 +53,9 @@ resource "helm_release" "ingress_nginx" {
       value = "false"
     },
     {
-      # We enable ssl passthrough for strimzi kafka
+      # Enable ssl passthrough for strimzi kafka
       name  = "controller.extraArgs.enable-ssl-passthrough"
       value = "true"
     },
   ]
 }
-
-

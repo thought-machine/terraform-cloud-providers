@@ -2,8 +2,9 @@
 # https://github.com/aws/eks-charts/tree/master/stable/aws-load-balancer-controller
 
 module "aws_load_balancer_controller_irsa_role" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
-  name                              = "aws-load-balancer-controller"
+  source                                 = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
+  version                                = "6.4.0"
+  name                                   = "aws-load-balancer-controller"
   attach_load_balancer_controller_policy = true
   oidc_providers = {
     main = {
@@ -15,7 +16,7 @@ module "aws_load_balancer_controller_irsa_role" {
 
 resource "helm_release" "aws_load_balancer_controller" {
   depends_on = [
-    null_resource.kubectl , module.aws_load_balancer_controller_irsa_role, helm_release.cert_manager
+    null_resource.kubectl, module.aws_load_balancer_controller_irsa_role, helm_release.cert_manager
   ]
   name       = "aws-load-balancer-controller"
   repository = "https://aws.github.io/eks-charts"

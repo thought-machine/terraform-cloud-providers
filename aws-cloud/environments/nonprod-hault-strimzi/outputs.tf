@@ -41,24 +41,17 @@ output "database_master_username" {
   value = module.db.master_username
 }
 
-output "vault_installer_role_arn" {
-  value = module.secrets-manager.vault_installer_role_arn
-}
-
-output "msk_sasl_scram_cmk_arn" {
-  value = module.kafka.msk_sasl_scram_cmk_arn
-}
-
-output "msk_cluster_arn" {
-  value = module.kafka.msk_cluster_arn
+output "database_master_password" {
+  value     = random_password.db_password.result
+  sensitive = true
 }
 
 output "bootstrap_brokers_sasl_scram" {
   value = module.kafka.bootstrap_brokers_sasl_scram
 }
 
-output "sm_role_permissions_boundary_arn" {
-  value = module.secrets-manager.role_permissions_boundary_arn
+output "bootstrap_brokers_mtls" {
+  value = module.kafka.bootstrap_brokers_mtls
 }
 
 output "ingress_class_name" {
@@ -67,4 +60,28 @@ output "ingress_class_name" {
 
 output "cert_manager_selfsigned_cluster_issuer" {
   value = module.eks.cert_manager_selfsigned_cluster_issuer
+}
+
+output "hault_address" {
+  value = module.secrets-manager.hault_address
+}
+
+output "hault_root_ca_tls_name" {
+  value = module.secrets-manager.hault_root_ca_tls_name
+}
+
+output "dummy_saml_idp_basic_auth_user" {
+  value = local.dummy_saml_idp_basic_auth_user
+}
+
+output "dummy_saml_idp_basic_auth_password" {
+  value = local.dummy_saml_idp_basic_auth_password
+}
+
+output "kafka_init_sasl_scram_username" {
+  value = local.kafka_init_sasl_scram_username
+}
+
+output "kafka_init_sasl_scram_password" {
+  value = local.kafka_init_sasl_scram_password
 }

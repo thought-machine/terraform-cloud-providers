@@ -27,11 +27,27 @@ variable "secret_prefix" {
 }
 
 variable "vault_installer_namespace" {
-  type = string
+  type    = string
   default = "tm-system"
 }
 
 variable "vault_installer_serviceaccount" {
-  type = string
+  type    = string
   default = "vault-installer"
+}
+
+variable "kafka_mode" {
+  type        = string
+  description = "Kafka authentication mode. [ sasl-scram | mtls ]"
+  default     = "sasl-scram"
+}
+
+variable "postgres_version" {
+  type    = string
+  default = "16.9"
+}
+
+variable "kubernetes_version" {
+  type    = string
+  default = "1.35"
 }
