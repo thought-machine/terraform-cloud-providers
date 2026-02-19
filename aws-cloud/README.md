@@ -17,7 +17,7 @@ aws-cloud/
 ├── environments/                   # Sample environment configuration variants
 │   ├── nonprod-asm-msk/            #   Environment with AWS Secrets Manager, MSK Kafka
 │   ├── nonprod-hault-strimzi/      #   Environment with Hashicorp Vault, Strimzi Kafka
-├── modules/                        # Reusable Terraform modules
+├── modules/                        # Reusable Terraform sub-modules
 │   ├──db/                          #   Modules for databases
 │   ├──k8s/                         #   Modules for Kubernetes clusters
 │   ├──kafka/                       #   Modules for Kafka clusters
@@ -66,9 +66,9 @@ Choice of:
 
 ### Configure
 
-Configure the environment in `terraform.tfvars` [example](./environments/nonprod-asm-msk/terraform.tfvars.example) in the selected [environments](./environments)/ENV_NAME subdirectory.
+Configure the environment in `terraform.tfvars` [example](./environments/nonprod-asm-msk/terraform.example.tfvars) in the selected [environments](./environments)/ENV_NAME subdirectory.
 
-Configure the Terraform state S3 bucket in `backend.tfvars` [example](./environments/nonprod-asm-msk/backend.tfvars.example).
+Configure the Terraform state S3 bucket in `backend.tfvars` [example](./environments/nonprod-asm-msk/backend.example.tfvars).
 
 ### Create Environment
 
