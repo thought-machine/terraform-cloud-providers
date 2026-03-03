@@ -2,15 +2,7 @@ variable "project" {
   type = string
 }
 
-variable "owner" {
-  type = string
-}
-
 variable "aws_region" {
-  type = string
-}
-
-variable "aws_profile" {
   type = string
 }
 
@@ -24,4 +16,9 @@ variable "private_subnet_ids" {
 
 variable "route53_private_zone_arn" {
   type = string
+}
+
+variable "kubernetes_version" {
+  type    = string
+  default = "1.35"
 }

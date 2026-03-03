@@ -1,7 +1,6 @@
 
 locals {
-  msk_name               = "${var.project}-msk"
-  msk_sasl_secret_prefix = "AmazonMSK_"
+  msk_name = "${var.project}-msk"
 }
 
 # nosemgrep: resource-not-on-allowlist
@@ -42,13 +41,13 @@ resource "aws_msk_cluster" "main" {
 
 # nosemgrep: resource-not-on-allowlist
 resource "aws_msk_configuration" "main" {
-  kafka_versions = ["${var.kafka_version}"]
-  name           = local.msk_name
+  kafka_versions    = [var.kafka_version]
+  name              = local.msk_name
   server_properties = <<PROPERTIES
 auto.create.topics.enable = false
 unclean.leader.election.enable= false
 delete.topic.enable = true
-default.replication.factor	= ${var.kafka_topc_replication_factor}
+default.replication.factor	= ${var.default_topic_replication_factor}
 PROPERTIES
 }
 

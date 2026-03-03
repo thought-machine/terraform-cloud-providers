@@ -1,6 +1,7 @@
 module "vpc_cni_irsa" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
-  name = "vpc-cni"
+  source                = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
+  version               = "6.4.0"
+  name                  = "vpc-cni"
   attach_vpc_cni_policy = true
   vpc_cni_enable_ipv4   = true
   oidc_providers = {
@@ -18,8 +19,9 @@ resource "aws_eks_addon" "vpc_cni" {
 }
 
 module "ebs_csi_irsa" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
-  name = "ebs-csi"
+  source                = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
+  version               = "6.4.0"
+  name                  = "ebs-csi"
   attach_ebs_csi_policy = true
   oidc_providers = {
     main = {
@@ -30,15 +32,15 @@ module "ebs_csi_irsa" {
 }
 
 resource "aws_eks_addon" "ebs_csi_driver" {
-  cluster_name             = module.eks.cluster_name
-  addon_name               = "aws-ebs-csi-driver"
-  addon_version            = "v1.49.0-eksbuild.1"
-  service_account_role_arn = module.ebs_csi_irsa.arn
+  cluster_name                = module.eks.cluster_name
+  addon_name                  = "aws-ebs-csi-driver"
+  addon_version               = "v1.54.0-eksbuild.1"
+  service_account_role_arn    = module.ebs_csi_irsa.arn
   resolve_conflicts_on_update = "OVERWRITE"
 }
 
 resource "helm_release" "metrics_server" {
-  depends_on = [ null_resource.kubectl ]
+  depends_on = [time_sleep.wait_for_rbac]
   name       = "metrics-server"
   repository = "https://kubernetes-sigs.github.io/metrics-server/"
   chart      = "metrics-server"
@@ -54,8 +56,9 @@ resource "aws_eks_addon" "external_dns" {
 }
 
 module "external_dns_irsa" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
-  name = "external-dns"
+  source                        = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
+  version                       = "6.4.0"
+  name                          = "external-dns"
   attach_external_dns_policy    = true
   external_dns_hosted_zone_arns = [var.route53_private_zone_arn]
   oidc_providers = {

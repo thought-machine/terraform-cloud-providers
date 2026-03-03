@@ -1,32 +1,23 @@
-provider "helm" {
-    kubernetes = {
-        host                   = data.aws_eks_cluster.eks.endpoint
-        cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks.certificate_authority[0].data)
-        exec = {
-            api_version = "client.authentication.k8s.io/v1beta1"
-            args        = ["eks", "get-token", "--cluster-name", var.eks_cluster_name]
-            command     = "aws"
-        }
-    }
-}
-
-data "aws_eks_cluster" "eks" {
-    depends_on = [var.eks_cluster_name]
-    name       = var.eks_cluster_name
-}
-
 data "aws_caller_identity" "main" {}
 
 locals {
-    db_secrets_name  = "root-db-secrets"
-    db_secrets_value = {
-        "${var.database_hostname}" = var.database_password
+  db_secrets_name = "root-db-secrets"
+  db_secrets_value = {
+    "${var.database_hostname}" = var.database_password
+  }
+  dummy_saml_idp_secrets_name = "dummy-saml-idp-secrets"
+  dummy_saml_idp_secrets_value = {
+    default = {
+      basic_auth_user     = var.dummy_saml_idp_basic_auth_user
+      basic_auth_password = var.dummy_saml_idp_basic_auth_password
     }
-    aws_account_id = data.aws_caller_identity.main.account_id
+  }
+  aws_account_id = data.aws_caller_identity.main.account_id
+  dependency     = jsonencode(var.dependency)
 }
 
-# nosemgrep: resource-not-on-allowlist
-resource "helm_release" "secrets-provider-aws" {
+resource "helm_release" "secrets_provider_aws" {
+  depends_on = [local.dependency]
   name       = "secrets-provider-aws"
   repository = "https://aws.github.io/secrets-store-csi-driver-provider-aws"
   chart      = "secrets-store-csi-driver-provider-aws"
@@ -34,7 +25,6 @@ resource "helm_release" "secrets-provider-aws" {
   version    = "2.0.0"
 }
 
-# database root password
 resource "aws_secretsmanager_secret" "root_db_secret" {
   name                    = "${var.tm_iam_prefix}/${var.secret_prefix}/${local.db_secrets_name}"
   description             = "TM database root credentials for ${var.database_hostname}"
@@ -46,10 +36,23 @@ resource "aws_secretsmanager_secret_version" "root_db_secret" {
   secret_string = jsonencode(local.db_secrets_value)
 }
 
+# dummy idp password
+resource "aws_secretsmanager_secret" "dummy_saml_idp" {
+  name                    = "${var.tm_iam_prefix}/${var.secret_prefix}/${local.dummy_saml_idp_secrets_name}"
+  description             = "For SAML authentication. The values must match common.basic_auth.password and common.basic_auth.username in the prepared values.yaml"
+  recovery_window_in_days = 0
+}
+
+resource "aws_secretsmanager_secret_version" "dummy_saml_idp" {
+  secret_id     = aws_secretsmanager_secret.dummy_saml_idp.id
+  secret_string = jsonencode(local.dummy_saml_idp_secrets_value)
+}
+
 module "irsa_vault_installer" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
-  version = "6.2.1"
-  name = "${var.project}-vault-installer"
+  depends_on = [local.dependency]
+  source     = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
+  version    = "6.2.1"
+  name       = "${var.project}-vault-installer"
   policies = {
     "min_access" = aws_iam_policy.vault_installer_policy.arn
   }
@@ -81,7 +84,6 @@ data "aws_iam_policy_document" "vault_installer_policy" {
     resources = [
       "arn:aws:iam::${local.aws_account_id}:role/${var.tm_iam_prefix}/*"
     ]
-    # Condition StringEquals iam:PermissionsBoundary: ARN of application_permission_boundary
   }
   statement {
     sid    = "AllowSecretsOnlyInPath"
@@ -102,7 +104,7 @@ data "aws_iam_policy_document" "vault_installer_policy" {
 
 data "aws_iam_policy_document" "application_permission_boundary" {
   statement {
-    sid = "AllowGetSecretsOnlyInPath"
+    sid    = "AllowGetSecretsOnlyInPath"
     effect = "Allow"
     actions = [
       "secretsmanager:GetSecretValue",

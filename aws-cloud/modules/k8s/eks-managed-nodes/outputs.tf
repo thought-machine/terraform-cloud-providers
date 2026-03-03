@@ -37,3 +37,13 @@ output "node_iam_role_arn" {
 output "cert_manager_selfsigned_cluster_issuer" {
   value = local.cert_manager_selfsigned_cluster_issuer
 }
+
+output "is_ready" {
+  description = "A synchronization point that completes only after CRDs and the LB Controller are fully ready."
+  value = {
+    crds          = null_resource.wait_for_crds.id
+    lb_controller = terraform_data.wait_for_aws_load_balancer_controller.id
+    metrics       = resource.helm_release.metrics_server.id
+    priorityClass = resource.kubernetes_priority_class.platform_support.id
+  }
+}
