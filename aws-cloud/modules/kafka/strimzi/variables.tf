@@ -39,6 +39,11 @@ variable "kafka_mode" {
   }
 }
 
+variable "oidc_issuer_url" {
+  description = "OIDC issuer url for OAuth listener"
+  type = string
+}
+
 variable "dependency" {
   type = any
 }

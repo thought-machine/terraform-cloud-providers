@@ -286,7 +286,7 @@ resource "aws_kms_key" "hault" {
 }
 
 resource "aws_iam_policy" "hault_kms" {
-  name        = "VaultKMSUnsealPolicy"
+  name        = "${var.project}-VaultKMSUnsealPolicy"
   description = "Allows Hault to use KMS for unsealing"
   policy = jsonencode({
     Version = "2012-10-17"
@@ -301,7 +301,7 @@ resource "aws_iam_policy" "hault_kms" {
 module "hault_role" {
   source                = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
   version               = "6.4.0"
-  name                  = "hault-kms-unseal-role"
+  name                  = "${var.project}-hault-kms-unseal-role"
   attach_vpc_cni_policy = true
   vpc_cni_enable_ipv4   = true
   oidc_providers = {

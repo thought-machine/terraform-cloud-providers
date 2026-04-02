@@ -115,6 +115,7 @@ resource "random_password" "db_password" {
 
 module "secrets-manager" {
   source             = "../../modules/secrets/hashicorp-vault"
+  project            = var.project
   project_domain     = var.project_domain
   oidc_provider_arn  = module.eks.oidc_provider_arn
   ingress_class_name = module.eks.ingress_class_name
@@ -130,4 +131,5 @@ module "kafka" {
   dependency                     = module.eks.is_ready
   kafka_mode                     = var.kafka_mode
   kafka_version                  = "3.9.0"
+  oidc_issuer_url                = module.eks.oidc_issuer_url
 }

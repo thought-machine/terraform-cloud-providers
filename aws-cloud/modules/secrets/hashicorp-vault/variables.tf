@@ -1,3 +1,7 @@
+variable "project" {
+  type = string
+}
+
 variable "project_domain" {
   type = string
 }
