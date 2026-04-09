@@ -41,6 +41,11 @@ output "database_master_username" {
   value = module.db.master_username
 }
 
+output "database_master_password" {
+  value     = random_password.db_password.result
+  sensitive = true
+}
+
 output "vault_installer_role_arn" {
   value = module.secrets-manager.vault_installer_role_arn
 }
