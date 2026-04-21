@@ -21,7 +21,7 @@ module "vpc" {
   private_subnets    = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 4, k + 3)]
   database_subnets   = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 4, k + 6)]
   enable_nat_gateway = false
-  single_nat_gateway = true
+  single_nat_gateway = true # single shared private route table
   public_subnet_tags = {
     "kubernetes.io/role/elb" = 1
   }
@@ -29,6 +29,15 @@ module "vpc" {
     "kubernetes.io/role/internal-elb" = 1
     "karpenter.sh/discovery"          = var.project
   }
+  default_security_group_ingress = [
+    {
+      from_port   = 443
+      to_port     = 443
+      protocol    = "tcp"
+      description = "Allow HTTPS from VPC CIDR"
+      cidr_blocks = local.vpc_cidr
+    }
+  ]
 }
 
 resource "aws_route53_zone" "main" {
