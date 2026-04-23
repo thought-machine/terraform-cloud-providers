@@ -14,6 +14,10 @@ variable "aws_profile" {
   type = string
 }
 
+variable "vpc_cidr" {
+  type = string
+}
+
 variable "project_domain" {
   type = string
 }

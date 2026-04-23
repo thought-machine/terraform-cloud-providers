@@ -82,6 +82,7 @@ module "network" {
   project        = var.project
   aws_region     = var.aws_region
   project_domain = var.project_domain
+  vpc_cidr       = var.vpc_cidr
 }
 
 module "eks" {
@@ -131,5 +132,4 @@ module "kafka" {
   dependency                     = module.eks.is_ready
   kafka_mode                     = var.kafka_mode
   kafka_version                  = "3.9.0"
-  oidc_issuer_url                = module.eks.oidc_issuer_url
 }

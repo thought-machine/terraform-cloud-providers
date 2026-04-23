@@ -1,13 +1,15 @@
 # Prefix for resource names.
 project                        = "PROJECT_NAME"
 # Resource tag.
-owner                          = "REPLACE_ME"
+owner                          = "OWNER"
 # AWS Region string.
-aws_region                     = "REPLACE_ME"
+aws_region                     = "REGION"
 # AWS CLI Profile name.
-aws_profile                    = "REPLACE_ME"
+aws_profile                    = "PROFILE"
+# VPC CIDR block
+vpc_cidr                       = "CIDR"
 # DNS domain name for resources.
-project_domain                 = "REPLACE_ME"
+project_domain                 = "DOMAIN"
 # If using AWS Secrets Manager module, defines prefix paths for IAM roles, policies and secrets.
 tm_iam_prefix                  = "tm/PROJECT_NAME"
 # Prefix for secrets from a specific Vault Core instance.

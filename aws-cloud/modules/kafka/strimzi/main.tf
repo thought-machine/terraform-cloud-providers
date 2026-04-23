@@ -13,14 +13,11 @@ locals {
   kafka_subdomain         = "${local.kafka_namespace}.${var.project_domain}"
   sasl_broker_hostnames   = formatlist("kafka-%s.${local.kafka_subdomain}", range(var.kafka_broker_replicas))
   mtls_broker_hostnames   = formatlist("mtls-%s.${local.kafka_subdomain}", range(var.kafka_broker_replicas))
-  oauth_broker_hostnames  = formatlist("oauth-%s.${local.kafka_subdomain}", range(var.kafka_broker_replicas))
   sasl_bootstrap_hostname = "sasl-bootstrap.${local.kafka_subdomain}"
   mtls_bootstrap_hostname = "mtls-bootstrap.${local.kafka_subdomain}"
-  oauth_bootstrap_hostname= "oauth-bootstrap.${local.kafka_subdomain}"
   kafka_broker_cert       = "kafka-broker-cert"
   sasl_external_port      = 9093
   mtls_external_port      = 9094
-  oauth_external_port     = 9096
   kafka_init_username     = var.kafka_init_sasl_scram_username
   kafka_init_user_secret = {
     username = var.kafka_init_sasl_scram_username
@@ -196,49 +193,6 @@ spec:
             annotations:
               kubernetes.io/ingress.class: ${local.ingress_nginx_ingress_class}
               external-dns.alpha.kubernetes.io/hostname: ${local.mtls_broker_hostnames[2]}
-          brokerCertChainAndKey:
-            secretName: ${local.kafka_broker_cert}
-            certificate: tls.crt
-            key: tls.key
-
-      # Extrernal OAuth listener
-      - name: oauth
-        port: ${local.oauth_external_port}
-        type: ingress
-        tls: true
-        authentication:
-          type: oauth
-          validIssuerUri: ${var.oidc_issuer_url}
-          jwksEndpointUri: ${var.oidc_issuer_url}/keys
-          userNameClaim: sub
-        authorization:
-          type: simple
-        configuration:
-          class: ${local.ingress_nginx_ingress_class}
-          bootstrap:
-            host: ${local.oauth_bootstrap_hostname}
-            alternativeNames:
-            - oauth-bootstrap
-            - oauth-bootstrap.${local.kafka_namespace}.svc.cluster.local
-            annotations:
-              kubernetes.io/ingress.class: ${local.ingress_nginx_ingress_class}
-              external-dns.alpha.kubernetes.io/hostname: ${local.oauth_bootstrap_hostname}
-          brokers:
-          - broker: 0
-            host: ${local.oauth_broker_hostnames[0]}
-            annotations:
-              kubernetes.io/ingress.class: ${local.ingress_nginx_ingress_class}
-              external-dns.alpha.kubernetes.io/hostname: ${local.oauth_broker_hostnames[0]}
-          - broker: 1
-            host: ${local.oauth_broker_hostnames[1]}
-            annotations:
-              kubernetes.io/ingress.class: ${local.ingress_nginx_ingress_class}
-              external-dns.alpha.kubernetes.io/hostname: ${local.oauth_broker_hostnames[1]}
-          - broker: 2
-            host:  ${local.oauth_broker_hostnames[2]}
-            annotations:
-              kubernetes.io/ingress.class: ${local.ingress_nginx_ingress_class}
-              external-dns.alpha.kubernetes.io/hostname: ${local.oauth_broker_hostnames[2]}
           brokerCertChainAndKey:
             secretName: ${local.kafka_broker_cert}
             certificate: tls.crt

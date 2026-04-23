@@ -75,6 +75,7 @@ module "network" {
   project        = var.project
   aws_region     = var.aws_region
   project_domain = var.project_domain
+  vpc_cidr       = var.vpc_cidr
 }
 
 module "eks" {
