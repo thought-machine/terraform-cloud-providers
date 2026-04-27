@@ -53,10 +53,11 @@ module "irsa_vault_installer" {
   source     = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
   version    = "6.2.1"
   name       = "${var.project}-vault-installer"
+  path       = "/${var.tm_iam_prefix}/"
   policies = {
     "min_access" = aws_iam_policy.vault_installer_policy.arn
   }
-  permissions_boundary = aws_iam_policy.vault_installer_policy.arn # application_permission_boundary.arn
+  permissions_boundary = aws_iam_policy.vault_installer_policy.arn
   oidc_providers = {
     main = {
       provider_arn               = var.eks_oidc_provider_arn

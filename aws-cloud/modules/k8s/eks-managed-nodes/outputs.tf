@@ -22,6 +22,10 @@ output "oidc_provider" {
   value = module.eks.oidc_provider
 }
 
+output "oidc_issuer_url" {
+  value = module.eks.cluster_oidc_issuer_url
+}
+
 output "ingress_class_name" {
   value = local.ingress_nginx_ingress_class
 }

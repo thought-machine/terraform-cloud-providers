@@ -82,6 +82,7 @@ module "network" {
   project        = var.project
   aws_region     = var.aws_region
   project_domain = var.project_domain
+  vpc_cidr       = var.vpc_cidr
 }
 
 module "eks" {
@@ -115,6 +116,7 @@ resource "random_password" "db_password" {
 
 module "secrets-manager" {
   source             = "../../modules/secrets/hashicorp-vault"
+  project            = var.project
   project_domain     = var.project_domain
   oidc_provider_arn  = module.eks.oidc_provider_arn
   ingress_class_name = module.eks.ingress_class_name

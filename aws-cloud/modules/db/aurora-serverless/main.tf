@@ -13,6 +13,7 @@ module "aurora_postgresql_v2" {
   master_username             = var.master_username
   master_password             = var.master_password
   manage_master_user_password = false
+  iam_database_authentication_enabled = true
   vpc_id                      = var.vpc_id
   db_subnet_group_name        = var.database_subnet_group_name
   security_group_rules = {
@@ -33,4 +34,15 @@ module "aurora_postgresql_v2" {
     one = {}
   }
   cluster_performance_insights_enabled = true
+  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.pg.name
+}
+
+resource "aws_rds_cluster_parameter_group" "pg" {
+  name        = local.rds_name
+  family      = "aurora-postgresql16"
+  description = "Aurora cluster parameter group for pg_stat_statements"
+  parameter {
+    name         = "shared_preload_libraries"
+    value        = "pg_stat_statements"
+  }
 }
