@@ -18,7 +18,7 @@ module "irsa_vault_installer" {
 
 # permissions boundary for the Vault Installer. vault-installer-policy.json
 resource "aws_iam_policy" "vault_installer_policy" {
-  # ?? for_each = var.db_cluster_resource_id != null ? { "enabled" = var.db_cluster_resource_id } : {}
+  # TODO ?? for_each = var.db_cluster_resource_id != null ? { "enabled" = var.db_cluster_resource_id } : {}
   count = var.db_cluster_resource_id != null ? 1 : 0
   name  = "${var.project}-vault-installer-policy"
   path  = "/${var.tm_iam_prefix}/"
