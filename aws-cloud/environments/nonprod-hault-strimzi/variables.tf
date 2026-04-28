@@ -60,3 +60,8 @@ variable "iam_db_auth" {
   type    = bool
   default = false
 }
+
+variable "tm_db_admin" {
+  type = string
+  default = "tm_admin_iam"
+}
