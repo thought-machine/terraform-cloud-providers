@@ -69,6 +69,7 @@ module "irsa_vault_installer" {
 # permissions boundary for the Vault Installer. vault-installer-policy.json
 resource "aws_iam_policy" "vault_installer_policy" {
   name   = "${var.project}-vault-installer-policy"
+  path   = "/${var.tm_iam_prefix}/"
   policy = data.aws_iam_policy_document.vault_installer_policy.json
 }
 
@@ -120,6 +121,7 @@ data "aws_iam_policy_document" "application_permission_boundary" {
 # vault-role-permission-boundary / application permission boundary
 resource "aws_iam_policy" "application_permission_boundary" {
   name        = "${var.project}-vault-role-permission-boundary"
+  path        = "/${var.tm_iam_prefix}/"
   description = "TM Vault applications permissions to AWS Secret Manager"
   policy      = data.aws_iam_policy_document.application_permission_boundary.json
 }

@@ -55,3 +55,8 @@ variable "kubernetes_version" {
   type    = string
   default = "1.35"
 }
+
+variable "iam_db_auth" {
+  type    = bool
+  default = false
+}

@@ -22,3 +22,7 @@ variable "kubernetes_version" {
   type    = string
   default = "1.35"
 }
+
+variable "tm_iam_prefix" {
+  type = string
+}

@@ -2,6 +2,7 @@ module "vpc_cni_irsa" {
   source                = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
   version               = "6.4.0"
   name                  = "vpc-cni"
+  path                  = "/${var.tm_iam_prefix}/"
   attach_vpc_cni_policy = true
   vpc_cni_enable_ipv4   = true
   oidc_providers = {
@@ -22,6 +23,7 @@ module "ebs_csi_irsa" {
   source                = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
   version               = "6.4.0"
   name                  = "ebs-csi"
+  path                  = "/${var.tm_iam_prefix}/"
   attach_ebs_csi_policy = true
   oidc_providers = {
     main = {
@@ -59,6 +61,7 @@ module "external_dns_irsa" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
   version                       = "6.4.0"
   name                          = "external-dns"
+  path                          = "/${var.tm_iam_prefix}/"
   attach_external_dns_policy    = true
   external_dns_hosted_zone_arns = [var.route53_private_zone_arn]
   oidc_providers = {

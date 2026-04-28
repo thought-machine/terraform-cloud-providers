@@ -15,8 +15,11 @@ locals {
   hault_tls_cert_name      = "hault-tls-cert"
   hault_root_tls_cert_name = "hault-root-ca-tls"
   root_token_secret_name   = "hault-init"
+  aws_account_id           = data.aws_caller_identity.main.account_id
   dependency               = jsonencode(var.dependency)
 }
+
+data "aws_caller_identity" "main" {}
 
 data "aws_region" "current" {}
 
@@ -287,6 +290,7 @@ resource "aws_kms_key" "hault" {
 
 resource "aws_iam_policy" "hault_kms" {
   name        = "${var.project}-VaultKMSUnsealPolicy"
+  path        = "/${var.tm_iam_prefix}/"
   description = "Allows Hault to use KMS for unsealing"
   policy = jsonencode({
     Version = "2012-10-17"
@@ -302,6 +306,7 @@ module "hault_role" {
   source                = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
   version               = "6.4.0"
   name                  = "${var.project}-hault-kms-unseal-role"
+  path                  = "/${var.tm_iam_prefix}/"
   attach_vpc_cni_policy = true
   vpc_cni_enable_ipv4   = true
   oidc_providers = {

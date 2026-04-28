@@ -5,6 +5,7 @@ module "aws_load_balancer_controller_irsa_role" {
   source                                 = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
   version                                = "6.4.0"
   name                                   = "aws-load-balancer-controller"
+  path                                   = "/${var.tm_iam_prefix}/"
   attach_load_balancer_controller_policy = true
   oidc_providers = {
     main = {
