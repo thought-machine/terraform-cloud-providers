@@ -307,8 +307,6 @@ module "hault_role" {
   version               = "6.4.0"
   name                  = "${var.project}-hault-kms-unseal-role"
   path                  = "/${var.tm_iam_prefix}/"
-  attach_vpc_cni_policy = true
-  vpc_cni_enable_ipv4   = true
   oidc_providers = {
     main = {
       provider_arn               = var.oidc_provider_arn

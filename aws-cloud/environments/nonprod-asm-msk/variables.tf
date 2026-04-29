@@ -54,3 +54,15 @@ variable "kubernetes_version" {
   type    = string
   default = "1.35"
 }
+
+variable "iam_db_auth" {
+  description = "Toggles IAM RBAC auth for database, instead of password. Not supported for ASM MSK mode. Set to false."
+  type    = bool
+  default = false
+}
+
+variable "tm_db_admin" {
+  description = "Database admin user. Not used in ASM MSK mode."
+  type = string
+  default = "tm_admin"
+}

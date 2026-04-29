@@ -86,6 +86,7 @@ module "eks" {
   private_subnet_ids       = module.network.private_subnets
   route53_private_zone_arn = module.network.aws_route53_private_zone_arn
   kubernetes_version       = var.kubernetes_version
+  tm_iam_prefix            = var.tm_iam_prefix
 }
 
 module "db" {

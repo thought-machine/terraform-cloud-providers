@@ -22,6 +22,11 @@ variable "db_cluster_resource_id" {
   default     = null
 }
 
+variable "iam_db_auth" {
+  type    = bool
+  default = false
+}
+
 variable "vault_installer_namespace" {
   type    = string
   default = "tm-system"
@@ -36,7 +41,8 @@ variable "tm_iam_prefix" {
   type = string
 }
 
-variable "tm_iam_db_admin" {
+variable "tm_db_admin" {
+  description = "DB admin username, used to set vault-installer role IAM policy during DB IAM auth."
   type    = string
   default = "tm_admin_iam"
 }
