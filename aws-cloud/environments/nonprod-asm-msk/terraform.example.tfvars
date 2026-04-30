@@ -20,3 +20,6 @@ vault_installer_serviceaccount = "vault-installer"
 kafka_mode                     = "sasl-scram"
 postgres_version               = "16.9"
 kubernetes_version             = "1.35"
+# Toggles IAM RBAC auth for database, instead of password. Not supported for ASM MSK mode. Set to false
+iam_db_auth                    = "false"
+tm_db_admin                    = "DB_ADMIN_USERNAME"

@@ -13,3 +13,7 @@ output "security_group_id" {
 output "master_username" {
   value = var.master_username
 }
+
+output "cluster_resource_id" {
+  value = module.aurora_postgresql_v2.cluster_resource_id
+}

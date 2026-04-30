@@ -55,3 +55,15 @@ variable "kubernetes_version" {
   type    = string
   default = "1.35"
 }
+
+variable "iam_db_auth" {
+  description = "Toggles IAM RBAC auth for database, instead of password."
+  type    = bool
+  default = false
+}
+
+variable "tm_db_admin" {
+  description = "Database admin user."
+  type = string
+  default = "tm_admin_iam"
+}

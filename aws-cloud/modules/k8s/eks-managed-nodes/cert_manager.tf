@@ -8,6 +8,7 @@ module "cert_manager_irsa_role" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
   version                       = "6.2.1"
   name                          = "${var.project}-cert-manager"
+  path                          = "/${var.tm_iam_prefix}/"
   attach_cert_manager_policy    = true
   cert_manager_hosted_zone_arns = [var.route53_private_zone_arn]
   oidc_providers = {

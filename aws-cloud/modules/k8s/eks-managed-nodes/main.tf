@@ -101,6 +101,10 @@ module "eks" {
       }
       use_latest_ami_release_version = false
       eks_ami_release_version        = local.eks_ami_release_version
+      metadata_options = {
+        # Unblock IMDSv2 from pod, workaround for core-db-online-migrator calls ec2imds: GetRegion"
+        http_put_response_hop_limit = 2
+      }
     }
   }
 }

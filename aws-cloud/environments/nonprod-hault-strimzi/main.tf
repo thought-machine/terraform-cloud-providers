@@ -93,6 +93,7 @@ module "eks" {
   private_subnet_ids       = module.network.private_subnets
   route53_private_zone_arn = module.network.aws_route53_private_zone_arn
   kubernetes_version       = var.kubernetes_version
+  tm_iam_prefix            = var.tm_iam_prefix
 }
 
 module "db" {
@@ -120,6 +121,12 @@ module "secrets-manager" {
   project_domain     = var.project_domain
   oidc_provider_arn  = module.eks.oidc_provider_arn
   ingress_class_name = module.eks.ingress_class_name
+  db_cluster_resource_id         = var.iam_db_auth ? module.db.cluster_resource_id : null
+  vault_installer_namespace      = var.vault_installer_namespace
+  vault_installer_serviceaccount = var.vault_installer_serviceaccount
+  tm_iam_prefix                  = var.tm_iam_prefix
+  iam_db_auth        = var.iam_db_auth
+  tm_db_admin        = var.tm_db_admin
   dependency         = module.eks.is_ready
 }
 

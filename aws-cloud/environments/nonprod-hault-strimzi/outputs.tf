@@ -85,3 +85,7 @@ output "kafka_init_sasl_scram_username" {
 output "kafka_init_sasl_scram_password" {
   value = local.kafka_init_sasl_scram_password
 }
+
+output "vault_installer_role_arn" {
+  value = module.secrets-manager.vault_installer_role_arn
+}
