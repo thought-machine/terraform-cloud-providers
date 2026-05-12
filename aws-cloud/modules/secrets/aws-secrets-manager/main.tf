@@ -82,6 +82,7 @@ data "aws_iam_policy_document" "vault_installer_policy" {
       "iam:DeleteRole",
       "iam:PutRolePolicy",
       "iam:DeleteRolePolicy",
+      "iam:TagRole", # required by Vault Core 5.9
     ]
     resources = [
       "arn:aws:iam::${local.aws_account_id}:role/${var.tm_iam_prefix}/*"

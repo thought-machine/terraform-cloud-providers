@@ -105,6 +105,7 @@ module "eks" {
         # Unblock IMDSv2 from pod, workaround for core-db-online-migrator calls ec2imds: GetRegion"
         http_put_response_hop_limit = 2
       }
+      iam_role_use_name_prefix = false
     }
   }
 }

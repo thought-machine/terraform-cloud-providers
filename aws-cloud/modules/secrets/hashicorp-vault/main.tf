@@ -305,7 +305,7 @@ resource "aws_iam_policy" "hault_kms" {
 module "hault_role" {
   source                = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
   version               = "6.4.0"
-  name                  = "${var.project}-hault-kms-unseal-role"
+  name                  = "${var.project}-hault-kms"
   path                  = "/${var.tm_iam_prefix}/"
   oidc_providers = {
     main = {
