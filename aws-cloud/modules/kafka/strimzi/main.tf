@@ -209,6 +209,7 @@ spec:
       offsets.retention.minutes: 20160
       auto.create.topics.enable: false
       allow.everyone.if.no.acl.found: true
+      log.retention.hours: 8
     authorization:
       type: simple
       superUsers:

@@ -147,13 +147,19 @@ resource "null_resource" "wait_for_crds" {
   depends_on = [helm_release.cert_manager]
   provisioner "local-exec" {
     command = <<EOF
+      export KUBECONFIG=$(mktemp)
+      aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
       for i in {1..30}; do
-        kubectl get crd issuers.cert-manager.io && exit 0
+        kubectl get crd issuers.cert-manager.io && rm -f "$KUBECONFIG" && exit 0
         echo "Waiting for cert-manager CRDs..."
         sleep 10
       done
-      exit 1
+      rm -f "$KUBECONFIG" && exit 1
     EOF
+    environment = {
+      CLUSTER_NAME = module.eks.cluster_name
+      AWS_REGION = var.aws_region
+    }
   }
 }
 
@@ -164,10 +170,17 @@ resource "terraform_data" "wait_for_aws_load_balancer_controller" {
   provisioner "local-exec" {
     command = <<EOF
       echo "Waiting for AWS Load Balancer Controller to be ready..."
+      export KUBECONFIG=$(mktemp)
+      aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
       kubectl wait --namespace kube-system \
         --for=condition=ready pod \
         --selector=app.kubernetes.io/name=aws-load-balancer-controller \
         --timeout=180s
+      rm -f "$KUBECONFIG"
     EOF
+    environment = {
+      CLUSTER_NAME = module.eks.cluster_name
+      AWS_REGION = var.aws_region
+    }
   }
 }
