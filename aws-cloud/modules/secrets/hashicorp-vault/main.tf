@@ -16,6 +16,7 @@ locals {
   hault_root_tls_cert_name = "hault-root-ca-tls"
   root_token_secret_name   = "hault-init"
   aws_account_id           = data.aws_caller_identity.main.account_id
+  eks_cluster_name         = "${var.project}-eks"
   dependency               = jsonencode(var.dependency)
 }
 
@@ -164,11 +165,18 @@ EOT
 
 resource "terraform_data" "pvc_cleanup" {
   input = {
-    namespace = local.hault_namespace
+    namespace    = local.hault_namespace
+    aws_region   = data.aws_region.current.region
+    cluster_name = local.eks_cluster_name
   }
   provisioner "local-exec" {
     when    = destroy
-    command = "timeout 60s kubectl delete pvc -l app.kubernetes.io/name=vault -n ${self.input.namespace} --grace-period=0 --force --ignore-not-found | true"
+    command = <<EOF
+      export KUBECONFIG=$(mktemp)
+      aws eks update-kubeconfig --region ${self.input.aws_region} --name ${self.input.cluster_name}
+      timeout 60s kubectl delete pvc -l app.kubernetes.io/name=vault -n ${self.input.namespace} --grace-period=0 --force --ignore-not-found | true
+      rm -f "$KUBECONFIG"
+    EOF
   }
 }
 
@@ -323,6 +331,8 @@ resource "terraform_data" "hault_init" {
   input = {
     hault_namespace        = local.hault_namespace
     root_token_secret_name = local.root_token_secret_name
+    eks_cluster_name       = local.eks_cluster_name
+    aws_region             = data.aws_region.current.region
   }
   # Create-time
   provisioner "local-exec" {
@@ -331,11 +341,18 @@ resource "terraform_data" "hault_init" {
       HAULT_NAMESPACE        = self.input.hault_namespace
       HAULT_POD              = "hault-vault-0"
       ROOT_TOKEN_SECRET_NAME = self.input.root_token_secret_name
+      EKS_CLUSTER_NAME       = self.input.eks_cluster_name
+      AWS_REGION             = self.input.aws_region
     }
   }
   # Destroy-time
   provisioner "local-exec" {
     when    = destroy
-    command = "kubectl delete secret ${self.input.root_token_secret_name} -n ${self.input.hault_namespace} --ignore-not-found"
+    command = <<EOT
+      export KUBECONFIG=$(mktemp)
+      aws eks update-kubeconfig --region ${self.input.aws_region}  --name ${self.input.eks_cluster_name}
+      kubectl delete secret ${self.input.root_token_secret_name} -n ${self.input.hault_namespace} --ignore-not-found
+      rm -f "$KUBECONFIG"
+    EOT
   }
 }

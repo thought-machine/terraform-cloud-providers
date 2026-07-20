@@ -1,10 +1,15 @@
 #!/bin/bash
 set -eE -o pipefail
+trap '[ -f "${KUBECONFIG:-}" ] && rm -f "$KUBECONFIG"' EXIT
 trap 'rc=$?; echo "Error (exit $rc) at line $LINENO in $0"; exit $rc' ERR
 
 HAULT_NAMESPACE=${HAULT_NAMESPACE:-"hault-system"}
 HAULT_POD=${HAULT_POD:-"hault-vault-0"}
 ROOT_TOKEN_SECRET_NAME=${ROOT_TOKEN_SECRET_NAME:-"hault-init"} # name of k8s secret containing the hvs Hault Root Key.
+[[ -z "$AWS_REGION" ]] && echo "missing AWS_REGION environment variable." && exit 1
+[[ -z "$EKS_CLUSTER_NAME" ]] && echo "missing EKS_CLUSTER_NAME environment variable." && exit 1
+export KUBECONFIG=$(mktemp)
+aws eks update-kubeconfig --region $AWS_REGION --name $EKS_CLUSTER_NAME
 
 attempts=0
 until STATUS=$(kubectl exec -n ${HAULT_NAMESPACE} ${HAULT_POD} -- sh -c "export VAULT_SKIP_VERIFY=true; vault status -format=json"); do
