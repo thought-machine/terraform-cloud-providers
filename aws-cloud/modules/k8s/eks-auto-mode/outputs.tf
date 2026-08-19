@@ -43,10 +43,11 @@ output "cert_manager_selfsigned_cluster_issuer" {
 }
 
 output "is_ready" {
-  description = "A synchronization point that completes only after CRDs and Metrics Server are fully ready."
+  description = "A synchronization point that completes only after CRDs and Nginx Ingress are fully ready."
   value = {
     crds          = null_resource.wait_for_crds.id
     metrics       = resource.helm_release.metrics_server.id
     priorityClass = resource.kubernetes_priority_class.platform_support.id
+    ingress_nginx = resource.helm_release.ingress_nginx.id
   }
 }
