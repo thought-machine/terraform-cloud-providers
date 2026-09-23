@@ -86,7 +86,7 @@ module "network" {
 }
 
 module "eks" {
-  source                   = "../../modules/k8s/eks-managed-nodes"
+  source                   = "../../modules/k8s/eks-auto-mode"
   project                  = var.project
   aws_region               = var.aws_region
   vpc_id                   = module.network.vpc_id
